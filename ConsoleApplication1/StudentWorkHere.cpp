@@ -48,18 +48,6 @@ void PlayerController::SelectNearestUnitUsingBFS()
 	}
 }
 
-typedef struct TilePriority
-{
-	int priority;
-	CVect position;
-
-	TilePriority(int newPrio, CVect newPosition) 
-	{
-		priority = newPrio;
-		position = newPosition;
-	}
-};
-
 void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect to, bool allowdiag = true)
 {
 	// Check if the tile clicked is an accessible tile
@@ -67,8 +55,10 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 	{
 		return;
 	}
-	std::list<TilePriority> visiting;
+
 	std::set<CVect> alreadyTreated;
+	std::map<CVect, int> visitingPriority;
+
 	std::map<CVect, CVect> closestToStartParent;
 	std::map<CVect, int> costFromStart;
 
@@ -77,21 +67,27 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 	currentPos.y = (int)currentPos.y + 0.5f;
 	to.x = (int)to.x + 0.5f;
 	to.y = (int)to.y + 0.5f;
-	CVect firstUnitPosition(currentPos);
-	visiting.push_back(TilePriority(0, currentPos));
+	visitingPriority.emplace(currentPos, 0);
 	costFromStart.emplace(currentPos, 0);
 
-	while (!visiting.empty())
+	while (!visitingPriority.empty())
 	{
-		currentPos = visiting.front().position;
-		visiting.pop_front();
+		std::map<CVect, int>::iterator prioIt = visitingPriority.begin();
+		unsigned int minimumPrio = 0xFFFFFFFF;
+		while (prioIt != visitingPriority.end())
+		{
+			if (prioIt->second < minimumPrio)
+			{
+				minimumPrio = prioIt->second;
+				currentPos = prioIt->first;
+			}
+			prioIt++;
+		}
+		visitingPriority.erase(currentPos);
+		alreadyTreated.insert(currentPos);
 		if (currentPos == to)
 		{
 			break;
-		}
-		if (alreadyTreated.find(currentPos) != alreadyTreated.end())
-		{
-			continue;
 		}
 		for (int x = -1; x < 2; x++)
 		{
@@ -101,34 +97,28 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 				{
 					continue;
 				}
-				std::shared_ptr<Tile> tile = game->GetMap()->GetTile(currentPos.x + x, currentPos.y + y);
-				if (tile == nullptr || tile->GetCost() == UINT32_MAX)
+				CVect tilePos = CVect(currentPos.x + x, currentPos.y + y, 0);
+				std::shared_ptr<Tile> tile = game->GetMap()->GetTile(tilePos.x, tilePos.y);
+				if (tile == nullptr)
 				{
 					continue;
 				}
-				CVect tilePos = CVect(currentPos.x + x, currentPos.y + y, 0);
-				int tileCost = costFromStart.find(currentPos)->second + game->GetMap()->GetTileCost(tilePos.x, tilePos.y);
+				if (alreadyTreated.find(tilePos) != alreadyTreated.end())
+				{
+					continue;
+				}
+				if (tile->GetCost() == UINT32_MAX)
+				{
+					alreadyTreated.insert(tilePos);
+					continue;
+				}
+				int tileCost = costFromStart.find(currentPos)->second + tile->GetCost();
 				std::map<CVect, CVect>::iterator lastParentIterator = closestToStartParent.find(tilePos);
 				if (lastParentIterator == closestToStartParent.end())
 				{
 					closestToStartParent.emplace(tilePos, currentPos);
 					costFromStart.emplace(tilePos, tileCost);
-					std::list<TilePriority>::iterator it = visiting.begin();
-					int priority = tileCost + ComputeHeuristic(tilePos, to);
-					while (it != visiting.end())
-					{
-						if (it->priority > priority)
-						{
-							visiting.insert(it, TilePriority(priority, tilePos));
-							it = visiting.begin();
-							break;
-						}
-						it++;
-					}
-					if (it == visiting.end())
-					{
-						visiting.push_back(TilePriority(priority, tilePos));
-					}
+					visitingPriority.emplace(tilePos, tileCost + ComputeHeuristic(tilePos, to));
 				}
 				else
 				{
@@ -136,27 +126,11 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 					{
 						closestToStartParent[tilePos] = currentPos;
 						costFromStart[tilePos] = tileCost;
-						std::list<TilePriority>::iterator it = visiting.begin();
-						int priority = tileCost + ComputeHeuristic(tilePos, to);
-						while (it != visiting.end())
-						{
-							if (it->priority > priority)
-							{
-								visiting.insert(it, TilePriority(priority, tilePos));
-								it = visiting.begin();
-								break;
-							}
-							it++;
-						}
-						if (it == visiting.end())
-						{
-							visiting.push_back(TilePriority(priority, tilePos));
-						}
+						visitingPriority[tilePos] = tileCost + ComputeHeuristic(tilePos, to);
 					}
 				}
 			}
 		}
-		alreadyTreated.insert(currentPos);
 	}
 
 	if (closestToStartParent.find(to) == closestToStartParent.end())
@@ -165,6 +139,7 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 	}
 
 	std::vector<CVect> path;
+	CVect firstUnitPosition = unit->GetPosition();
 	while (to != firstUnitPosition)
 	{
 		path.push_back(to);
