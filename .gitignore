@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+ConsoleApplication1/Debug
+Debug
+.vs
