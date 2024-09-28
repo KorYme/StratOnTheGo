@@ -1,0 +1,42 @@
+﻿  Game.cpp
+  PlayerController.cpp
+  StudentWorkHere.cpp
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(25,75): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(25,61): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(35,123): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(35,105): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(51,16): warning C4091: 'typedef ': ignored on left of 'TilePriority' when no variable is declared
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(66,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(66,32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(104,89): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(104,71): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(110,107): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(110,96): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(117,19): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(140,20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(187,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(187,29): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(194,49): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(194,36): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(196,18): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(196,26): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(213,71): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(213,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(223,28): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(223,39): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(223,85): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(223,99): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(225,25): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(225,36): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(225,82): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(225,96): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(226,23): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(226,34): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(227,23): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(227,34): warning C4244: 'argument': conversion from 'float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(240,22): warning C4244: 'argument': conversion from 'const float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(240,29): warning C4244: 'argument': conversion from 'const float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(243,33): warning C4244: 'argument': conversion from 'const float' to 'const unsigned int', possible loss of data
+C:\GitHub\C++ Projects\StratOnTheGo\ConsoleApplication1\StudentWorkHere.cpp(243,40): warning C4244: 'argument': conversion from 'const float' to 'const unsigned int', possible loss of data
+  Generating Code...
+  ConsoleApplication1.vcxproj -> C:\GitHub\C++ Projects\StratOnTheGo\Debug\StratOnTheGo.exe
