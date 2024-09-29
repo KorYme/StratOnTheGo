@@ -48,6 +48,11 @@ void PlayerController::SelectNearestUnitUsingBFS()
 	}
 }
 
+float ComputeHeuristic(CVect posA, CVect posB)
+{
+	return abs(posA.x - posB.x) + abs(posA.y - posB.y);
+}
+
 void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect to, bool allowdiag = true)
 {
 	// Check if the tile clicked is an accessible tile
@@ -150,11 +155,6 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 	}
 	std::reverse(path.begin(), path.end());
 	unit->SetPath(path);
-}
-
-float PlayerController::ComputeHeuristic(CVect posA, CVect posB) 
-{
-	return abs(posA.x - posB.x) + abs(posA.y - posB.y);
 }
 
 void FlowFieldMap::GenerateFlowField(std::shared_ptr<Map> sourceMap, CVect dest, bool allowDiags)
