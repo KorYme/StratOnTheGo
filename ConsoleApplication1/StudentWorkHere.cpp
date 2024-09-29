@@ -51,7 +51,8 @@ void PlayerController::SelectNearestUnitUsingBFS()
 void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect to, bool allowdiag = true)
 {
 	// Check if the tile clicked is an accessible tile
-	if (game->GetMap()->GetTile(to.x, to.y)->GetCost() == UINT32_MAX)
+	std::shared_ptr<Map> map = game->GetMap();
+	if (map->GetTile(to.x, to.y)->GetCost() == UINT32_MAX)
 	{
 		return;
 	}
@@ -93,12 +94,14 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 		{
 			for (int y = -1; y < 2; y++)
 			{
-				if ((!allowDiag && x != 0 && y != 0) || (x == 0 && y == 0))
+				if ((x == 0 && y == 0) || ((x != 0 && y != 0)
+					&& (!allowDiag || map->GetTileCost(currentPos.x, currentPos.y + y) == UINT32_MAX
+					|| map->GetTileCost(currentPos.x + x, currentPos.y) == UINT32_MAX)))
 				{
 					continue;
 				}
 				CVect tilePos = CVect(currentPos.x + x, currentPos.y + y, 0);
-				std::shared_ptr<Tile> tile = game->GetMap()->GetTile(tilePos.x, tilePos.y);
+				std::shared_ptr<Tile> tile = map->GetTile(tilePos.x, tilePos.y);
 				if (tile == nullptr)
 				{
 					continue;
@@ -139,7 +142,7 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 	}
 
 	std::vector<CVect> path;
-	CVect firstUnitPosition = unit->GetPosition();
+	CVect firstUnitPosition = CVect((int)unit->GetPosition().x + .5f, (int)unit->GetPosition().y + .5f, 0);
 	while (to != firstUnitPosition)
 	{
 		path.push_back(to);
@@ -151,9 +154,7 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 
 float PlayerController::ComputeHeuristic(CVect posA, CVect posB) 
 {
-	float dx = abs(posA.x - posB.x);
-	float dy = abs(posA.y - posB.y);
-	return dx + dy + (TWO_SQRT - 2) * fmin(dx, dy);
+	return abs(posA.x - posB.x) + abs(posA.y - posB.y);
 }
 
 void FlowFieldMap::GenerateFlowField(std::shared_ptr<Map> sourceMap, CVect dest, bool allowDiags)
@@ -176,7 +177,9 @@ void FlowFieldMap::GenerateFlowField(std::shared_ptr<Map> sourceMap, CVect dest,
 		{
 			for (int y = -1; y < 2; y++)
 			{
-				if ((!allowDiags && x != 0 && y != 0) || (x == 0 && y == 0))
+				if ((x == 0 && y == 0) || ((x != 0 && y != 0)
+					&& (!allowDiags || sourceMap->GetTileCost(currentPos.x, currentPos.y + y) == UINT32_MAX
+					|| sourceMap->GetTileCost(currentPos.x + x, currentPos.y) == UINT32_MAX)))
 				{
 					continue;
 				}
@@ -195,11 +198,13 @@ void FlowFieldMap::GenerateFlowField(std::shared_ptr<Map> sourceMap, CVect dest,
 					alreadyTreated.insert(tilePos);
 					continue;
 				}
-				if (distanceMap[tilePos.y][tilePos.x] > tile->GetCost() + distanceMap[currentPos.y][currentPos.x])
+				int tileCost = tile->GetCost() + distanceMap[currentPos.y][currentPos.x];
+				if (distanceMap[tilePos.y][tilePos.x] > tileCost
+					|| (distanceMap[tilePos.y][tilePos.x] == tileCost && flowField[tilePos.y][tilePos.x].length2() > (currentPos - tilePos).length2()))
 				{
 					distanceMap[tilePos.y][tilePos.x] = tile->GetCost() + distanceMap[currentPos.y][currentPos.x];
 					flowField[tilePos.y][tilePos.x] = currentPos - tilePos;
-					flowField[tilePos.y][tilePos.x].normalize();
+					// flowField[tilePos.y][tilePos.x].normalize();
 					if (visiting.find(tilePos) == visiting.end())
 					{
 						visiting.insert(tilePos);
