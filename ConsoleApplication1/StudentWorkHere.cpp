@@ -48,14 +48,20 @@ void PlayerController::SelectNearestUnitUsingBFS()
 	}
 }
 
-float ComputeHeuristic(CVect posA, CVect posB)
+float ComputeHeuristic(CVect posA, CVect posB, bool allowDiags)
 {
-	return abs(posA.x - posB.x) + abs(posA.y - posB.y);
+	if (allowDiags)
+	{
+		return std::max(abs(posA.x - posB.x), abs(posA.y - posB.y));
+	}
+	else
+	{
+		return abs(posA.x - posB.x) + abs(posA.y - posB.y);
+	}
 }
 
 void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect to, bool allowdiag = true)
 {
-	// Check if the tile clicked is an accessible tile
 	std::shared_ptr<Map> map = game->GetMap();
 	if (map->GetTile(to.x, to.y)->GetCost() == UINT32_MAX)
 	{
@@ -63,23 +69,26 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 	}
 
 	std::set<CVect> alreadyTreated;
-	std::map<CVect, int> visitingPriority;
+	std::map<CVect, float> visitingPriority;
 
 	std::map<CVect, CVect> closestToStartParent;
-	std::map<CVect, int> costFromStart;
+	std::map<CVect, float> costFromStart;
 
 	CVect currentPos = unit->GetPosition();
 	currentPos.x = (int)currentPos.x + 0.5f;
 	currentPos.y = (int)currentPos.y + 0.5f;
 	to.x = (int)to.x + 0.5f;
 	to.y = (int)to.y + 0.5f;
+	
 	visitingPriority.emplace(currentPos, 0);
 	costFromStart.emplace(currentPos, 0);
 
 	while (!visitingPriority.empty())
 	{
-		std::map<CVect, int>::iterator prioIt = visitingPriority.begin();
-		unsigned int minimumPrio = 0xFFFFFFFF;
+		std::map<CVect, float>::iterator prioIt = visitingPriority.begin();
+		currentPos = prioIt->first;
+		float minimumPrio = prioIt->second;
+		prioIt++;
 		while (prioIt != visitingPriority.end())
 		{
 			if (prioIt->second < minimumPrio)
@@ -120,22 +129,20 @@ void PlayerController::ComputePathUsingAStar(std::shared_ptr<Unit> unit, CVect t
 					alreadyTreated.insert(tilePos);
 					continue;
 				}
-				int tileCost = costFromStart.find(currentPos)->second + tile->GetCost();
+				float tileCost = costFromStart.find(currentPos)->second + tile->GetCost() / 2.f + map->GetTileCost(currentPos.x, currentPos.y) / 2.f;
 				std::map<CVect, CVect>::iterator lastParentIterator = closestToStartParent.find(tilePos);
 				if (lastParentIterator == closestToStartParent.end())
 				{
 					closestToStartParent.emplace(tilePos, currentPos);
 					costFromStart.emplace(tilePos, tileCost);
-					visitingPriority.emplace(tilePos, tileCost + ComputeHeuristic(tilePos, to));
+					visitingPriority.emplace(tilePos, tileCost + ComputeHeuristic(tilePos, to, allowdiag));
 				}
-				else
+				else if (costFromStart.find(lastParentIterator->second)->second + map->GetTileCost(lastParentIterator->second.x, lastParentIterator->second.y) / 2.f
+					> costFromStart.find(currentPos)->second + map->GetTileCost(currentPos.x, currentPos.y) / 2.f)
 				{
-					if (costFromStart.find(lastParentIterator->second)->second > costFromStart.find(currentPos)->second)
-					{
-						closestToStartParent[tilePos] = currentPos;
-						costFromStart[tilePos] = tileCost;
-						visitingPriority[tilePos] = tileCost + ComputeHeuristic(tilePos, to);
-					}
+					closestToStartParent[tilePos] = currentPos;
+					costFromStart[tilePos] = tileCost;
+					visitingPriority[tilePos] = tileCost + ComputeHeuristic(tilePos, to, allowdiag);
 				}
 			}
 		}
@@ -164,7 +171,6 @@ void FlowFieldMap::GenerateFlowField(std::shared_ptr<Map> sourceMap, CVect dest,
 	{
 		return;
 	}
-
 	std::set<CVect> visiting;
 	std::set<CVect> alreadyTreated;
 	CVect currentPos = CVect((int)dest.x, (int)dest.y, 0);
@@ -172,7 +178,21 @@ void FlowFieldMap::GenerateFlowField(std::shared_ptr<Map> sourceMap, CVect dest,
 	distanceMap[dest.y][dest.x] = 0;
 	while (!visiting.empty())
 	{
+		std::set<CVect>::iterator it = visiting.begin();
+		unsigned int minimumCost = distanceMap[it->y][it->x];
+		currentPos = *it;
+		it++;
+		while (it != visiting.end())
+		{
+			if (distanceMap[it->y][it->x] < minimumCost)
+			{
+				currentPos = CVect(it->x, it->y, 0);
+				minimumCost = distanceMap[it->y][it->x];
+			}
+			it++;
+		}
 		alreadyTreated.insert(currentPos);
+		visiting.erase(currentPos);
 		for (int x = -1; x < 2; x++)
 		{
 			for (int y = -1; y < 2; y++)
@@ -204,25 +224,12 @@ void FlowFieldMap::GenerateFlowField(std::shared_ptr<Map> sourceMap, CVect dest,
 				{
 					distanceMap[tilePos.y][tilePos.x] = tile->GetCost() + distanceMap[currentPos.y][currentPos.x];
 					flowField[tilePos.y][tilePos.x] = currentPos - tilePos;
-					// flowField[tilePos.y][tilePos.x].normalize();
 					if (visiting.find(tilePos) == visiting.end())
 					{
 						visiting.insert(tilePos);
 					}
 				}
 			}
-		}
-		visiting.erase(currentPos);
-		unsigned int minimumCost = 0xFFFFFFFF;
-		std::set<CVect>::iterator it = visiting.begin();
-		while (it != visiting.end())
-		{
-			if (distanceMap[it->y][it->x] < minimumCost)
-			{
-				currentPos = CVect(it->x, it->y, 0);
-				minimumCost = distanceMap[it->y][it->x];
-			}
-			it++;
 		}
 	}
 }
