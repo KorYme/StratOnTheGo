@@ -96,6 +96,7 @@ void PlayerController::Update(int deltaTime)
                             unit->AddToPath(selectionRect.x / TILE_SIZE, selectionRect.y / TILE_SIZE);
                         break;
                     case MoveMode::aStar:
+                        
                         for (auto unit : selectedUnits)
                         {
                             ComputePathUsingAStar(unit, dest, allowDiag);

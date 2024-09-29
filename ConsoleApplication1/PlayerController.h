@@ -16,8 +16,6 @@ enum class MoveMode
 	FlowField
 };
 
-const float TWO_SQRT = 1.41421356237f;
-
 class PlayerController
 {
 protected:
